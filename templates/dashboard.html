@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ACHRON Dashboard</title>
+</head>
+<body>
+
+<h1>🏠 ACHRON Travel Agent</h1>
+
+<h2>Welcome, {{ name }} 👋</h2>
+
+<hr>
+
+<h3>Services</h3>
+
+<ul>
+    <li>✈️ Flight Booking</li>
+    <li>🏨 Hotel Booking</li>
+    <li><a href="/booking">🧳 New Booking</a></li>
+    <li>📖 My Bookings</li>
+    <li>❤️ Wishlist</li>
+    <li>🤖 AI Trip Planner</li>
+    <li><a href="/profile">👤 My Profile</a></li>
+    <li><a href="/logout">🚪 Logout</a></li>
+</ul>
+
+<hr>
+
+<h3>📖 My Bookings</h3>
+
+{% if bookings %}
+    {% for booking in bookings %}
+        <div>
+            <h4>Booking ID: {{ booking["booking_id"] }}</h4>
+            <p>📍 Destination: {{ booking["destination"] }}</p>
+            <p>📅 Travel Date: {{ booking["travel_date"] }}</p>
+            <p>👥 Travellers: {{ booking["travellers"] }}</p>
+            <p>💺 Seat: {{ booking["seat_number"] or "Not selected" }}</p>
+            <p>💰 Total Amount: ₹{{ booking["total_amount"] }}</p>
+            <p>📌 Booking Status: {{ booking["booking_status"] }}</p>
+            <p>💳 Payment Status: {{ booking["payment_status"] }}</p>
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No bookings found.</p>
+{% endif %}
+
+</body>
+</html>
