@@ -39,7 +39,16 @@ def signup():
         phone = request.form["phone"]
         password = request.form["password"]
 
-        create_user(full_name, email, phone, password)
+        success, message = create_user(
+            full_name,
+            email,
+            phone,
+            password
+        )
+
+        if not success:
+            return f"❌ {message}"
+
         send_welcome_email(email, full_name)
 
         return "✅ Account Created Successfully!"
