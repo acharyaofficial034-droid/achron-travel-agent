@@ -15,7 +15,20 @@ app.secret_key = "ACHRON_SECRET_KEY_2026"
 
 @app.route("/")
 def home():
-    return "<h1>Welcome to ACHRON Travel Agent</h1><h3>Version 1.0</h3>"
+    return """
+    <h1>Welcome to ACHRON Travel Agent</h1>
+    <h3>Version 1.0</h3>
+
+    <br>
+
+    <a href="/login">
+        <button>Login</button>
+    </a>
+
+    <a href="/signup">
+        <button>Sign Up</button>
+    </a>
+    """
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
