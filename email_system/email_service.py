@@ -56,7 +56,7 @@ def send_booking_confirmation(
     seat_number,
     total_amount
 ):
-    booking_url = "https://achron-travel-agent.onrender.com/bookings"
+    booking_url = "https://achron-travel-agent.onrender.com/dashboard"
 
     try:
         response = resend.Emails.send({
