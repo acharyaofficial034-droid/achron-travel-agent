@@ -1,17 +1,20 @@
 import random
 import sqlite3
+import secrets
+import time
 from flask import Flask, render_template, request, session, redirect, url_for
 from database.database import initialize_database
 from auth.signup import create_user
 from auth.login import login_user
 from auth.profile import get_user, update_user
 from auth.password import hash_password, verify_password, update_password
-from email_system.email_service import send_welcome_email, send_booking_confirmation
+from email_system.email_service import send_welcome_email, send_booking_confirmation, send_password_reset_email
 from booking.booking_service import save_booking
 from booking.booking_service import get_user_bookings, save_booking
 
 app = Flask(__name__)
 app.secret_key = "ACHRON_SECRET_KEY_2026"
+reset_tokens = {}
 
 @app.route("/")
 def home():
@@ -74,6 +77,96 @@ def login():
             return message
 
     return render_template("login.html")
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+
+    if request.method == "POST":
+        email = request.form["email"].strip()
+
+        connection = sqlite3.connect("achron.db")
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "SELECT email FROM users WHERE email = ?",
+            (email,)
+        )
+
+        user = cursor.fetchone()
+        connection.close()
+
+        if user is None:
+            return "❌ No account found with this email."
+
+        token = secrets.token_urlsafe(32)
+
+        reset_tokens[token] = {
+            "email": email,
+            "expires": time.time() + 900
+        }
+
+        reset_link = (
+            "https://achron-travel-agent.onrender.com/reset-password/"
+            + token
+        )
+
+        send_password_reset_email(email, reset_link)
+
+        return "✅ Password reset link sent. Check your email."
+
+    return """
+    <h2>Forgot Password</h2>
+
+    <form method="POST">
+        <input type="email"
+               name="email"
+               placeholder="Your Email"
+               required>
+
+        <button type="submit">
+            Send Reset Link
+        </button>
+    </form>
+    """
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+
+    data = reset_tokens.get(token)
+
+    if data is None:
+        return "❌ Invalid or expired reset link."
+
+    if time.time() > data["expires"]:
+        reset_tokens.pop(token, None)
+        return "❌ This reset link has expired."
+
+    if request.method == "POST":
+        new_password = request.form["password"]
+
+        if len(new_password) < 8:
+            return "❌ Password must be at least 8 characters."
+
+        update_password(data["email"], new_password)
+
+        reset_tokens.pop(token, None)
+
+        return "✅ Password changed successfully. You can now login."
+
+    return """
+    <h2>Set New Password</h2>
+
+    <form method="POST">
+        <input type="password"
+               name="password"
+               placeholder="New Password"
+               minlength="8"
+               required>
+
+        <button type="submit">
+            Change Password
+        </button>
+    </form>
+    """
 
 @app.route("/dashboard")
 def dashboard():
