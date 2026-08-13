@@ -7,6 +7,7 @@ def create_user(full_name, email, phone, password):
 
     try:
         hashed_password = hash_password(password)
+        print("DEBUG PHONE:", repr(phone))
 
         cursor.execute("""
             INSERT INTO users(full_name, email, phone, password)

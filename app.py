@@ -49,7 +49,10 @@ def signup():
         if not success:
             return f"❌ {message}"
 
-        send_welcome_email(email, full_name)
+        try:
+            send_welcome_email(email, full_name)
+        except Exception as e:
+            print("WELCOME EMAIL ERROR:", e)
 
         return "✅ Account Created Successfully!"
 
