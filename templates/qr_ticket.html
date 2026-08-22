@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ACHRON E-Ticket</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef3f8;
+            color: #172b4d;
+        }
+
+        /* HEADER */
+
+        .topbar {
+            background: linear-gradient(135deg, #062653, #0b4c8c);
+            color: white;
+            padding: 28px 20px;
+        }
+
+        .topbar-inner {
+            max-width: 1000px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            display: block;
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .ticket-heading {
+            text-align: right;
+        }
+
+        .ticket-heading h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .ticket-heading p {
+            margin: 6px 0 0;
+        }
+
+        /* ACTIONS */
+
+        .actions {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 10px;
+            text-align: right;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .download {
+            background: #1976d2;
+            color: white;
+        }
+
+        .print {
+            background: #16a085;
+            color: white;
+        }
+
+        .back {
+            background: #5f6b7a;
+            color: white;
+        }
+
+        /* TICKET */
+
+        .ticket {
+            max-width: 1000px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+        }
+
+        .ticket-body {
+            padding: 30px;
+        }
+
+        /* STATUS */
+
+        .status {
+            display: inline-block;
+            padding: 9px 18px;
+            margin-bottom: 25px;
+            border-radius: 25px;
+
+            background: #e7f7ed;
+            color: #16834b;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .cancelled {
+            background: #fdeaea;
+            color: #c62828;
+        }
+
+        /* MAIN GRID */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 25px;
+        }
+
+        /* SECTION */
+
+        .section {
+            border: 1px solid #dce4ed;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 22px;
+            background: white;
+        }
+
+        .section-title {
+            margin: -22px -22px 20px;
+            padding: 14px 18px;
+
+            background: #092b57;
+            color: white;
+
+            border-radius: 14px 14px 0 0;
+
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        /* INFO */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .info label {
+            display: block;
+
+            color: #7a8797;
+
+            font-size: 12px;
+            text-transform: uppercase;
+
+            margin-bottom: 6px;
+        }
+
+        .info strong {
+            display: block;
+
+            font-size: 16px;
+            color: #172b4d;
+        }
+
+        /* QR */
+
+        .qr-box {
+            border: 1px solid #dce4ed;
+            border-radius: 14px;
+
+            padding: 20px;
+
+            text-align: center;
+        }
+
+        .qr-title {
+            background: #092b57;
+            color: white;
+
+            margin: -20px -20px 20px;
+
+            padding: 14px;
+
+            border-radius: 14px 14px 0 0;
+
+            font-weight: bold;
+        }
+
+        .qr-box img {
+            width: 220px;
+            max-width: 100%;
+
+            display: block;
+            margin: 15px auto;
+        }
+
+        .qr-box p {
+            color: #718096;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .qr-id {
+            font-weight: bold;
+            color: #092b57;
+            margin-top: 10px;
+        }
+
+        /* PAYMENT */
+
+        .payment-status {
+            padding: 13px;
+
+            border-radius: 9px;
+
+            background: #eaf8ef;
+            color: #16834b;
+
+            font-weight: bold;
+
+            margin-top: 20px;
+        }
+
+        /* IMPORTANT */
+
+        .important-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .important-list li {
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            background: #092b57;
+            color: white;
+
+            text-align: center;
+
+            padding: 25px;
+        }
+
+        .footer strong {
+            font-size: 17px;
+        }
+
+        .footer p {
+            margin-bottom: 0;
+            opacity: 0.85;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .topbar-inner {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .ticket-heading {
+                text-align: center;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                text-align: center;
+            }
+
+            .ticket {
+                margin: 10px;
+                border-radius: 12px;
+            }
+
+            .ticket-body {
+                padding: 18px;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            .section-title {
+                margin: -18px -18px 18px;
+            }
+        }
+
+        /* PRINT */
+
+/* ================================
+   PRINT VERSION
+================================ */
+
+@media print {
+
+    /* A4 PAGE */
+    @page {
+        size: A4 portrait;
+        margin: 8mm;
+    }
+
+    /* BASIC */
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        color: #172b4d !important;
+    }
+
+    /* HIDE BUTTONS */
+    .actions {
+        display: none !important;
+    }
+
+    /* HEADER */
+    .topbar {
+        display: block !important;
+        width: 100% !important;
+        padding: 12px !important;
+
+        background: #092b57 !important;
+        color: white !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .topbar-inner {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .logo {
+        font-size: 22px !important;
+    }
+
+    .logo span {
+        font-size: 10px !important;
+    }
+
+    .ticket-heading {
+        text-align: right !important;
+    }
+
+    .ticket-heading h2 {
+        font-size: 22px !important;
+    }
+
+    .ticket-heading p {
+        font-size: 11px !important;
+    }
+
+
+    /* TICKET */
+    .ticket {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: white !important;
+
+        border-radius: 0 !important;
+        box-shadow: none !important;
+
+        overflow: visible !important;
+    }
+
+    .ticket-body {
+        display: block !important;
+
+        width: 100% !important;
+
+        padding: 12px !important;
+    }
+
+
+    /* STATUS */
+    .status {
+        display: inline-block !important;
+
+        margin-bottom: 12px !important;
+        padding: 7px 12px !important;
+
+        font-size: 11px !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+
+    /* ================================
+       MAIN CONTENT
+    ================================= */
+
+    .main-grid {
+        display: block !important;
+
+        width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* LEFT SIDE */
+    .main-grid > div:first-child {
+        display: block !important;
+
+        width: 100% !important;
+    }
+
+
+    /* RIGHT SIDE / QR */
+    .main-grid > div:last-child {
+        display: block !important;
+
+        width: 100% !important;
+    }
+
+
+    /* ================================
+       SECTIONS
+    ================================= */
+
+    .section {
+        display: block !important;
+
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 0 9px 0 !important;
+        padding: 10px !important;
+
+        background: white !important;
+        color: #172b4d !important;
+
+        border: 1px solid #dce4ed !important;
+        border-radius: 7px !important;
+
+        overflow: visible !important;
+
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+    }
+
+
+    /* SECTION TITLE */
+    .section-title {
+        display: block !important;
+
+        margin: -10px -10px 10px -10px !important;
+        padding: 7px 10px !important;
+
+        background: #092b57 !important;
+        color: white !important;
+
+        border-radius: 7px 7px 0 0 !important;
+
+        font-size: 12px !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+
+    /* ================================
+       INFORMATION GRID
+    ================================= */
+
+    .info-grid {
+        display: grid !important;
+
+        grid-template-columns: 1fr 1fr !important;
+
+        width: 100% !important;
+
+        gap: 8px !important;
+    }
+
+    .info {
+        display: block !important;
+
+        width: 100% !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .info label {
+        display: block !important;
+
+        margin-bottom: 3px !important;
+
+        color: #718096 !important;
+
+        font-size: 8px !important;
+    }
+
+    .info strong {
+        display: block !important;
+
+        color: #172b4d !important;
+
+        font-size: 10px !important;
+    }
+
+
+    /* ================================
+       PAYMENT
+    ================================= */
+
+    .payment-status {
+        margin-top: 8px !important;
+        padding: 7px !important;
+
+        font-size: 9px !important;
+    }
+
+
+    /* ================================
+       QR TICKET
+    ================================= */
+
+    .qr-box {
+        display: block !important;
+
+        width: 100% !important;
+
+        margin: 0 0 10px 0 !important;
+        padding: 8px !important;
+
+        text-align: center !important;
+
+        border: 1px solid #dce4ed !important;
+        border-radius: 7px !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .qr-title {
+        display: block !important;
+
+        margin: -8px -8px 8px -8px !important;
+        padding: 7px !important;
+
+        background: #092b57 !important;
+        color: white !important;
+
+        border-radius: 7px 7px 0 0 !important;
+
+        font-size: 11px !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .qr-box img {
+        display: block !important;
+
+        width: 120px !important;
+        height: 120px !important;
+
+        max-width: none !important;
+
+        margin: 7px auto !important;
+    }
+
+    .qr-box p {
+        display: block !important;
+
+        margin: 4px 0 !important;
+
+        color: #718096 !important;
+
+        font-size: 8px !important;
+    }
+
+    .qr-id {
+        display: block !important;
+
+        margin-top: 5px !important;
+
+        color: #092b57 !important;
+
+        font-size: 9px !important;
+    }
+
+
+    /* ================================
+       IMPORTANT INFORMATION
+       START FROM PAGE 2
+    ================================= */
+
+    .important-section {
+        display: block !important;
+
+        width: 100% !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .important-list {
+        display: block !important;
+
+        margin: 0 !important;
+        padding-left: 18px !important;
+    }
+
+    .important-list li {
+        margin-bottom: 6px !important;
+
+        font-size: 10px !important;
+
+        color: #4a5568 !important;
+    }
+
+
+    /* ================================
+       FOOTER
+       SAME PAGE AS IMPORTANT INFO
+    ================================= */
+
+    .footer {
+        display: block !important;
+
+        width: 100% !important;
+
+        margin: 10px 0 0 0 !important;
+        padding: 10px !important;
+
+        background: #092b57 !important;
+        color: white !important;
+
+        text-align: center !important;
+
+        break-before: auto !important;
+        page-break-before: auto !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .footer strong {
+        display: block !important;
+
+        font-size: 11px !important;
+    }
+
+    .footer p {
+        margin: 3px 0 0 0 !important;
+
+        font-size: 9px !important;
+    }
+
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="topbar">
+
+    <div class="topbar-inner">
+
+        <div class="logo">
+
+            ✈️ ACHRON
+
+            <span>
+                TRAVEL AGENT
+            </span>
+
+        </div>
+
+
+        <div class="ticket-heading">
+
+            <h2>
+                E-TICKET
+            </h2>
+
+            <p>
+                Booking Confirmation
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BUTTONS -->
+
+<div class="actions">
+
+    <button
+        class="download"
+        onclick="downloadTicket()">
+
+        📥 Save as PDF
+
+    </button>
+
+
+    <button
+        class="print"
+        onclick="window.print()">
+
+        🖨️ Print Ticket
+
+    </button>
+
+
+    <a href="{{ url_for('booking_details', booking_id=booking['booking_id']) }}">
+
+        <button class="back">
+
+            ← Back
+
+        </button>
+
+    </a>
+
+</div>
+
+
+<!-- TICKET -->
+
+<div class="ticket">
+
+    <div class="ticket-body">
+
+
+        <!-- STATUS -->
+
+        {% if booking["booking_status"] == "Cancelled" %}
+
+            <div class="status cancelled">
+
+                ❌ BOOKING CANCELLED
+
+            </div>
+
+        {% else %}
+
+            <div class="status">
+
+                ✅ BOOKING CONFIRMED
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- MAIN -->
+
+        <div class="main-grid">
+
+
+            <!-- LEFT SIDE -->
+
+            <div>
+
+
+                <!-- BOOKING INFORMATION -->
+
+                <div class="section">
+
+                    <div class="section-title">
+
+                        🎫 Booking Information
+
+                    </div>
+
+
+                    <div class="info-grid">
+
+
+                        <div class="info">
+
+                            <label>
+                                Booking ID
+                            </label>
+
+                            <strong>
+                                {{ booking["booking_id"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                PNR
+                            </label>
+
+                            <strong>
+                                {{ booking["pnr"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Destination
+                            </label>
+
+                            <strong>
+                                📍 {{ booking["destination"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Travel Date
+                            </label>
+
+                            <strong>
+                                📅 {{ booking["travel_date"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Travellers
+                            </label>
+
+                            <strong>
+                                👥 {{ booking["travellers"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Seat Number
+                            </label>
+
+                            <strong>
+                                💺 {{ booking["seat_number"] or "Not selected" }}
+                            </strong>
+
+                        </div>
+
+
+                        <!-- BOOKING TIME -->
+
+                        <div class="info">
+
+                            <label>
+                                Booking Time
+                            </label>
+
+                            <strong>
+                                🕐 {{ booking["booking_time"] }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- PAYMENT -->
+
+                <div class="section">
+
+                    <div class="section-title">
+
+                        💳 Payment Information
+
+                    </div>
+
+
+                    <div class="info-grid">
+
+
+                        <div class="info">
+
+                            <label>
+                                Total Amount
+                            </label>
+
+                            <strong>
+                                ₹{{ booking["total_amount"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Payment Status
+                            </label>
+
+                            <strong>
+                                {{ booking["payment_status"] }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <label>
+                                Booking Status
+                            </label>
+
+                            <strong>
+                                {{ booking["booking_status"] }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    {% if booking["payment_status"]|lower == "paid" %}
+
+                        <div class="payment-status">
+
+                            ✅ Payment Successful
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- IMPORTANT INFORMATION -->
+
+                <div class="section important-section">
+
+                    <div class="section-title">
+
+                        ℹ️ Important Information
+
+                    </div>
+
+
+                    <ul class="important-list">
+
+                        <li>
+                            Carry your Booking ID and PNR during travel.
+                        </li>
+
+                        <li>
+                            Keep this e-ticket safely available on your phone.
+                        </li>
+
+                        <li>
+                            QR code can be used to verify booking information.
+                        </li>
+
+                        <li>
+                            Cancellation is subject to applicable terms.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- QR SIDE -->
+
+            <div>
+
+                <div class="qr-box">
+
+
+                    <div class="qr-title">
+
+                        📱 QR TICKET
+
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename=qr_file) }}"
+                        alt="ACHRON QR Ticket">
+
+
+                    <p>
+
+                        Scan this QR code to verify
+                        your booking information.
+
+                    </p>
+
+
+                    <div class="qr-id">
+
+                        {{ booking["booking_id"] }}
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <strong>
+
+            Thank you for choosing ACHRON Travel Agent!
+
+        </strong>
+
+
+        <p style="margin: 2px 0 0;">
+
+            Have a safe and happy journey. ✈️
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function downloadTicket() {
+
+    window.print();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

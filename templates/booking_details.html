@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Details - ACHRON</title>
+</head>
+
+<body>
+
+<h1>🎫 Booking Details</h1>
+
+<hr>
+
+<h3>🆔 Booking ID: {{ booking["booking_id"] }}</h3>
+
+<p>🔢 PNR: {{ booking["pnr"] }}</p>
+
+<p>📍 Destination: {{ booking["destination"] }}</p>
+
+<p>📅 Travel Date: {{ booking["travel_date"] }}</p>
+
+<p>👥 Travellers: {{ booking["travellers"] }}</p>
+
+<p>💺 Seat Number:
+    {{ booking["seat_number"] or "Not selected" }}
+</p>
+
+<p>💰 Total Amount:
+    ₹{{ booking["total_amount"] }}
+</p>
+
+<p>💳 Payment Status:
+    {{ booking["payment_status"] }}
+</p>
+
+<p>📌 Booking Status:
+    {{ booking["booking_status"] }}
+</p>
+
+<p>🕐 Booking Time:
+    {{ booking["booking_time"] }}
+</p>
+
+<hr>
+
+{% if booking["booking_status"] == "Cancelled" %}
+
+    <p>❌ This booking has been cancelled.</p>
+
+{% endif %}
+
+<br>
+<a href="{{ url_for('booking_qr', booking_id=booking['booking_id']) }}">
+    <button>🎫 Generate QR Ticket</button>
+</a>
+
+<a href="{{ url_for('my_bookings') }}">
+    <button>📖 Back to My Bookings</button>
+</a>
+
+<br><br>
+
+<a href="{{ url_for('dashboard') }}">
+    <button>🏠 Back to Dashboard</button>
+</a>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bookings - ACHRON</title>
+</head>
+
+<body>
+
+<h1>📖 My Bookings</h1>
+
+{% if bookings %}
+
+    {% for booking in bookings %}
+
+        <div>
+            <h3>🆔 Booking ID: {{ booking["booking_id"] }}</h3>
+            <a href="{{ url_for('booking_details', booking_id=booking['booking_id']) }}">
+    <button>👁️ View Details</button>
+</a>
+
+            <p>📍 Destination: {{ booking["destination"] }}</p>
+            <p>📅 Travel Date: {{ booking["travel_date"] }}</p>
+            <p>👥 Travellers: {{ booking["travellers"] }}</p>
+            <p>💺 Seat: {{ booking["seat_number"] or "Not selected" }}</p>
+            <p>📌 Booking Status: {{ booking["booking_status"] }}</p>
+            {% if booking["booking_status"] != "Cancelled" %}
+    <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking['booking_id']) }}">
+        <button type="submit"
+                onclick="return confirm('Are you sure you want to cancel this booking?');">
+            ❌ Cancel Booking
+        </button>
+    </form>
+{% else %}
+    <p>❌ This booking has been cancelled.</p>
+{% endif %}
+            <p>💰 Total Amount: ₹{{ booking["total_amount"] }}</p>
+            <p>💳 Payment Status: {{ booking["payment_status"] }}</p>
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No bookings found.</p>
+
+{% endif %}
+
+<br>
+
+<a href="{{ url_for('dashboard') }}">
+    <button>🏠 Back to Dashboard</button>
+</a>
+
+</body>
+</html>

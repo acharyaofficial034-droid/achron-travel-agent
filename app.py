@@ -2,6 +2,8 @@ import random
 import sqlite3
 import secrets
 import time
+import qrcode 
+import os
 from flask import Flask, render_template, request, session, redirect, url_for
 from database.database import initialize_database
 from auth.signup import create_user
@@ -194,6 +196,202 @@ def dashboard():
         "dashboard.html",
         name=user[0],
         bookings=bookings
+    )
+@app.route("/my-bookings")
+def my_bookings():
+
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    connection = sqlite3.connect("achron.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT user_id FROM users WHERE email = ?",
+        (session["user"],)
+    )
+
+    user = cursor.fetchone()
+    connection.close()
+
+    if user is None:
+        return "User not found"
+
+    user_id = user[0]
+
+    bookings = get_user_bookings(user_id)
+
+    return render_template(
+        "my_bookings.html",
+        bookings=bookings
+    )
+@app.route("/cancel-booking/<booking_id>", methods=["POST"])
+def cancel_booking(booking_id):
+
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    connection = sqlite3.connect("achron.db")
+    cursor = connection.cursor()
+
+    # Current logged-in user's ID
+    cursor.execute(
+        "SELECT user_id FROM users WHERE email = ?",
+        (session["user"],)
+    )
+
+    user = cursor.fetchone()
+
+    if user is None:
+        connection.close()
+        return "User not found"
+
+    user_id = user[0]
+
+    # Cancel only this user's booking
+    cursor.execute("""
+        UPDATE bookings
+        SET booking_status = 'Cancelled'
+        WHERE booking_id = ?
+        AND user_id = ?
+    """, (booking_id, user_id))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("my_bookings"))
+
+@app.route("/booking-details/<booking_id>")
+def booking_details(booking_id):
+
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    connection = sqlite3.connect("achron.db")
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT user_id FROM users WHERE email = ?",
+        (session["user"],)
+    )
+
+    user = cursor.fetchone()
+
+    if user is None:
+        connection.close()
+        return "User not found"
+
+    user_id = user["user_id"]
+
+    cursor.execute("""
+        SELECT
+            booking_id,
+            destination,
+            travel_date,
+            travellers,
+            seat_number,
+            booking_status,
+            total_amount,
+            payment_status,
+            booking_time,
+            pnr
+        FROM bookings
+        WHERE booking_id = ?
+        AND user_id = ?
+    """, (booking_id, user_id))
+
+    booking = cursor.fetchone()
+
+    connection.close()
+
+    if booking is None:
+        return "Booking not found"
+
+    print("BOOKING TIME:", booking["booking_time"])
+
+    return render_template(
+        "booking_details.html",
+        booking=booking
+    )
+
+@app.route("/booking-qr/<booking_id>")
+def booking_qr(booking_id):
+
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    connection = sqlite3.connect("achron.db")
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT user_id FROM users WHERE email = ?",
+        (session["user"],)
+    )
+
+    user = cursor.fetchone()
+
+    if user is None:
+        connection.close()
+        return "User not found"
+
+    user_id = user["user_id"]
+
+    cursor.execute("""
+        SELECT
+            booking_id,
+            destination,
+            travel_date,
+            travellers,
+            seat_number,
+            booking_status,
+            total_amount,
+            payment_status,
+            pnr,
+            booking_time
+        FROM bookings
+        WHERE booking_id = ?
+        AND user_id = ?
+    """, (booking_id, user_id))
+
+    booking = cursor.fetchone()
+
+    connection.close()
+
+    if booking is None:
+        return "Booking not found"
+
+    qr_data = f"""
+ACHRON TRAVEL AGENT
+Booking ID: {booking["booking_id"]}
+PNR: {booking["pnr"]}
+Destination: {booking["destination"]}
+Travel Date: {booking["travel_date"]}
+Booking Time: {booking["booking_time"]}
+Travellers: {booking["travellers"]}
+Seat: {booking["seat_number"] or "Not selected"}
+Status: {booking["booking_status"]}
+"""
+
+    qr = qrcode.make(qr_data)
+
+    os.makedirs("static/qr", exist_ok=True)
+
+    filename = f"{booking_id}.png"
+
+    filepath = os.path.join(
+        "static",
+        "qr",
+        filename
+    )
+
+    qr.save(filepath)
+
+    return render_template(
+        "qr_ticket.html",
+        booking=booking,
+        qr_file=f"qr/{filename}"
     )
 
 @app.route("/booking", methods=["GET", "POST"])
